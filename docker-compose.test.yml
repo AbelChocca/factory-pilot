@@ -1,0 +1,27 @@
+services:
+  postgres-test:
+    image: pgvector/pgvector:pg16
+    container_name: factorypilot-postgres-test
+    restart: unless-stopped
+
+    environment:
+      POSTGRES_USER: factorypilot_test
+      POSTGRES_PASSWORD: factorypilot_test
+      POSTGRES_DB: factorypilot_test_db
+
+    ports:
+      - "5433:5432"
+
+    networks:
+      - factorypilot-test-network
+
+    healthcheck:
+      test:
+        ["CMD-SHELL", "pg_isready -U factorypilot_test -d factorypilot_test_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+networks:
+  factorypilot-test-network:
+    name: factorypilot-test-network

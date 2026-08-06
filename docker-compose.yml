@@ -1,0 +1,62 @@
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    container_name: factorypilot-postgres
+    restart: unless-stopped
+
+    environment:
+      POSTGRES_USER: factorypilot
+      POSTGRES_PASSWORD: factorypilot
+      POSTGRES_DB: factorypilot_db
+
+    ports:
+      - "5432:5432"
+
+    volumes:
+      - factorypilot-postgres-data:/var/lib/postgresql/data
+
+    networks:
+      - factorypilot-network
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U factorypilot -d factorypilot_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    container_name: factorypilot-api
+    restart: unless-stopped
+
+    ports:
+      - "8000:8000"
+
+    environment:
+      ENV: development
+      DATABASE_URL: postgresql+asyncpg://factorypilot:factorypilot@postgres:5432/factorypilot_db
+
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+    volumes:
+      # Código local → hot reload
+      - .:/app
+
+      # Mantiene el venv del container separado del Mac
+      - factorypilot-api-venv:/app/.venv
+
+    networks:
+      - factorypilot-network
+
+volumes:
+  factorypilot-postgres-data:
+  factorypilot-api-venv:
+
+networks:
+  factorypilot-network:
+    name: factorypilot-network
