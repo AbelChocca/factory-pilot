@@ -1,0 +1,147 @@
+Project FactoryPilot {
+  database_type: "PostgreSQL"
+  Note: '''
+  FactoryPilot V1
+  AI Copilot for Furniture Manufacturing
+  '''
+}
+
+Enum Status {
+  ACTIVE
+  INACTIVE
+}
+
+Enum InventoryOwnerType {
+  PRODUCT
+  MATERIAL
+}
+
+Enum InventoryMovementType {
+  IN
+  OUT
+  ADJUSTMENT
+  RESERVED
+}
+
+Table products {
+  id uuid [pk]
+
+  sku varchar(50) [not null, unique]
+  name varchar(150) [not null]
+  description text
+
+  status Status [not null]
+
+  created_at timestamptz [not null]
+  updated_at timestamptz [not null]
+}
+
+Table materials {
+  id uuid [pk]
+
+  sku varchar(50) [not null, unique]
+  name varchar(150) [not null]
+  description text
+
+  unit varchar(30) [not null]
+
+  status Status [not null]
+
+  created_at timestamptz [not null]
+  updated_at timestamptz [not null]
+}
+
+Table product_materials {
+
+  product_id uuid [not null]
+  material_id uuid [not null]
+
+  quantity numeric(12,2) [not null]
+
+  Note: 'Bill Of Materials'
+
+  Indexes {
+    (product_id, material_id) [pk]
+  }
+}
+
+Table suppliers {
+  id uuid [pk]
+
+  name varchar(150) [not null]
+
+  email varchar(255)
+
+  phone varchar(30)
+
+  lead_time_days int [not null]
+
+  status Status [not null]
+
+  created_at timestamptz [not null]
+  updated_at timestamptz [not null]
+}
+
+Table supplier_materials {
+
+  supplier_id uuid [not null]
+
+  material_id uuid [not null]
+
+  supplier_sku varchar(50)
+
+  unit_price numeric(12,2)
+
+  preferred bool [not null]
+
+  Indexes {
+    (supplier_id, material_id) [pk]
+  }
+}
+
+Table inventory {
+
+  id uuid [pk]
+
+  owner_type InventoryOwnerType [not null]
+
+  owner_id uuid [not null]
+
+  quantity numeric(12,2) [not null]
+
+  minimum_quantity numeric(12,2) [not null]
+
+  last_movement_at timestamptz
+
+  created_at timestamptz [not null]
+  updated_at timestamptz [not null]
+
+  Indexes {
+    (owner_type, owner_id) [unique]
+  }
+}
+
+Table inventory_movements {
+
+  id uuid [pk]
+
+  inventory_id uuid [not null]
+
+  movement_type InventoryMovementType [not null]
+
+  quantity numeric(12,2) [not null]
+
+  reason text
+
+  created_at timestamptz [not null]
+}
+
+Ref: product_materials.product_id > products.id
+
+Ref: product_materials.material_id > materials.id
+
+Ref: supplier_materials.supplier_id > suppliers.id
+
+Ref: supplier_materials.material_id > materials.id
+
+Ref: inventory_movements.inventory_id > inventory.id

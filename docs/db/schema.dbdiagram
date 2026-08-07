@@ -1,0 +1,145 @@
+{
+  "version": "2.0.0",
+  "darkMode": true,
+  "gridEnabling": false,
+  "currentViewName": null,
+  "defaultView": {
+    "detailLevel": "All",
+    "tablePositions": [
+      {
+        "name": "products",
+        "schemaName": "public",
+        "x": 12,
+        "y": 386
+      },
+      {
+        "name": "materials",
+        "schemaName": "public",
+        "x": 12,
+        "y": 688
+      },
+      {
+        "name": "product_materials",
+        "schemaName": "public",
+        "x": 584.06201171875,
+        "y": 386
+      },
+      {
+        "name": "suppliers",
+        "schemaName": "public",
+        "x": 12,
+        "y": 1054
+      },
+      {
+        "name": "supplier_materials",
+        "schemaName": "public",
+        "x": 584.06201171875,
+        "y": 560
+      },
+      {
+        "name": "inventory",
+        "schemaName": "public",
+        "x": 802.626953125,
+        "y": 12
+      },
+      {
+        "name": "inventory_movements",
+        "schemaName": "public",
+        "x": 1370.72119140625,
+        "y": 12
+      },
+      {
+        "name": "knowledge_documents",
+        "schemaName": "public",
+        "x": 381.70068359375,
+        "y": 12
+      },
+      {
+        "name": "knowledge_embeddings",
+        "schemaName": "public",
+        "x": 12,
+        "y": 12
+      }
+    ],
+    "tableGroupCollapseStates": [],
+    "stickyNoteLayouts": [],
+    "referencePaths": [
+      {
+        "firstFieldNames": [
+          "product_id"
+        ],
+        "firstTableName": "product_materials",
+        "firstSchemaName": "public",
+        "firstRelation": "*",
+        "secondFieldNames": [
+          "id"
+        ],
+        "secondTableName": "products",
+        "secondSchemaName": "public",
+        "secondRelation": "1",
+        "checkPoints": []
+      },
+      {
+        "firstFieldNames": [
+          "material_id"
+        ],
+        "firstTableName": "product_materials",
+        "firstSchemaName": "public",
+        "firstRelation": "*",
+        "secondFieldNames": [
+          "id"
+        ],
+        "secondTableName": "materials",
+        "secondSchemaName": "public",
+        "secondRelation": "1",
+        "checkPoints": []
+      },
+      {
+        "firstFieldNames": [
+          "supplier_id"
+        ],
+        "firstTableName": "supplier_materials",
+        "firstSchemaName": "public",
+        "firstRelation": "*",
+        "secondFieldNames": [
+          "id"
+        ],
+        "secondTableName": "suppliers",
+        "secondSchemaName": "public",
+        "secondRelation": "1",
+        "checkPoints": []
+      },
+      {
+        "firstFieldNames": [
+          "material_id"
+        ],
+        "firstTableName": "supplier_materials",
+        "firstSchemaName": "public",
+        "firstRelation": "*",
+        "secondFieldNames": [
+          "id"
+        ],
+        "secondTableName": "materials",
+        "secondSchemaName": "public",
+        "secondRelation": "1",
+        "checkPoints": []
+      },
+      {
+        "firstFieldNames": [
+          "inventory_id"
+        ],
+        "firstTableName": "inventory_movements",
+        "firstSchemaName": "public",
+        "firstRelation": "*",
+        "secondFieldNames": [
+          "id"
+        ],
+        "secondTableName": "inventory",
+        "secondSchemaName": "public",
+        "secondRelation": "1",
+        "checkPoints": []
+      }
+    ]
+  },
+  "views": {}
+}
