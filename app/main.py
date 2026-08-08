@@ -15,7 +15,8 @@ from app.features.suppliers.supplier_material_router import supplier_material_ro
 from app.features.products.product_material_route import product_material_router
 from app.ai.rag.rag_router import rag_router
 from app.ai.chat.chat_router import chat_router
-from app.features.production_risk.router import production_risk_router
+from app.features.production_risk.router.production_risk import production_risk_router
+from app.features.production_risk.router.material_impact import material_impact_router
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -63,3 +64,4 @@ app.include_router(product_material_router)
 app.include_router(rag_router)
 app.include_router(chat_router)
 app.include_router(production_risk_router)
+app.include_router(material_impact_router)
