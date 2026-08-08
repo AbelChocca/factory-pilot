@@ -29,6 +29,16 @@ class CreateMaterialSchema(BaseModel):
 
     initial_minimum_stock: Decimal = Field(gt=0)
 
+class MaterialSearchResultSchema(BaseModel):
+    id: UUID
+    sku: str
+    name: str
+    unit: UnitType
+
+    model_config = ConfigDict(
+        from_attributes=True
+    )
+
 
 class MaterialResponseSchema(BaseModel):
     id: UUID
@@ -39,7 +49,7 @@ class MaterialResponseSchema(BaseModel):
 
     description: str | None
 
-    unit: str
+    unit: UnitType
 
     stock: Decimal
 
