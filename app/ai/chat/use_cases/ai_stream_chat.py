@@ -4,7 +4,7 @@ from typing import Any, AsyncIterator
 from uuid import UUID
 
 from app.ai.chat.schemas.message_schemas import (
-    AIEventMessage,
+    AIToolEvent,
     AIMessageDelta,
     AIMessageStart,
     AIMessageEnd,
@@ -111,8 +111,8 @@ class AIStreamChatUseCase:
             for tool_output in tool_outputs:
 
                 if tool_output["event"] is not None:
-                    yield AIEventMessage(
-                        event=tool_output["event"],
+                    yield AIToolEvent(
+                        event=tool_output["event"]
                     )
 
             input = [

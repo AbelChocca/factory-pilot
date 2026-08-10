@@ -29,11 +29,6 @@ class AIStreamError(BaseModel):
     type: Literal["error"] = "error"
     message: str
 
-class AIEventMessage(BaseModel):
-    type: Literal["event"] = "event"
-    event: AIEvent
-
-
 AIStreamEvent = (
     AIMessageStart
     | AIMessageDelta
