@@ -1,7 +1,7 @@
 from uuid import UUID
 
-from sqlalchemy import delete, select
-from sqlalchemy.orm import selectinload
+from sqlalchemy import delete, select, func
+from sqlalchemy.orm import selectinload, noload
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.features.purchase_plans.model import (
@@ -22,6 +22,44 @@ class PurchasePlanRepository:
         session: AsyncSession,
     ):
         self.session = session
+
+    async def get_all(
+        self,
+        page: int,
+        limit: int,
+    ) -> tuple[list[PurchasePlanTable], int]:
+
+        offset = (page - 1) * limit
+
+        count_statement = select(
+            func.count(PurchasePlanTable.id)
+        )
+
+        total_result = await self.session.execute(
+            count_statement,
+        )
+
+        total_items = total_result.scalar_one()
+
+        statement = (
+            select(PurchasePlanTable)
+            .options(
+                noload(PurchasePlanTable.items)
+            )
+            .order_by(
+                PurchasePlanTable.created_at.desc(),
+            )
+            .offset(offset)
+            .limit(limit)
+        )
+
+        result = await self.session.execute(
+            statement,
+        )
+
+        purchase_plans = result.scalars().all()
+
+        return list(purchase_plans), total_items
 
     async def get_items(
         self,

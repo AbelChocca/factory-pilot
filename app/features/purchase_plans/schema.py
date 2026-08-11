@@ -1,7 +1,9 @@
 from uuid import UUID
+from datetime import datetime
 from pydantic import BaseModel, Field, model_validator
 from decimal import Decimal
 from app.shared.types import UnitType
+from app.features.purchase_plans.types import PurchasePlanStatus
 
 class UpdatePurchasePlanItemSchema(BaseModel):
     material_id: UUID
@@ -10,8 +12,14 @@ class UpdatePurchasePlanItemSchema(BaseModel):
 
 
 class UpdatePurchasePlanSchema(BaseModel):
-    purchase_plan_id: UUID
     items: list[UpdatePurchasePlanItemSchema]
+
+class PurchasePlanResponseSchema(BaseModel):
+    id: UUID
+    status: PurchasePlanStatus
+    total_estimated_cost: Decimal
+    created_at: datetime
+    updated_at: datetime
 
 class PurchasePlanItemCreateSchema(BaseModel):
     material_id: UUID

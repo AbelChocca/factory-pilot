@@ -6,7 +6,7 @@ from app.features.purchase_plans.model import (
     PurchasePlanItemTable,
     PurchasePlanTable,
 )
-from app.features.purchase_plans.schema import CreatePurchasePlanSchema, UpdatePurchasePlanSchema, PurchasePlanItem
+from app.features.purchase_plans.schema import CreatePurchasePlanSchema, UpdatePurchasePlanSchema, PurchasePlanItem, PurchasePlanResponseSchema
 from app.features.purchase_plans.repository import (
     PurchasePlanRepository,
 )
@@ -14,6 +14,7 @@ from app.features.purchase_plans.types import PurchasePlanStatus
 from app.features.suppliers.repositories.supplier_material_repository import (
     SupplierMaterialRepository
 )
+from app.shared.schema import PaginatedResponseSchema
 
 
 class PurchasePlanService:
@@ -44,6 +45,31 @@ class PurchasePlanService:
 
         return await self.purchase_plan_repository.get_by_id(
             purchase_plan_id,
+        )
+
+    async def get_all(
+        self,
+        page: int,
+        limit: int,
+    ) -> PaginatedResponseSchema[PurchasePlanResponseSchema]:
+        items, total_items = await (
+            self.purchase_plan_repository.get_all(
+                page=page,
+                limit=limit,
+            )
+        )
+
+        total_pages = (
+            (total_items + limit - 1) // limit
+            if total_items
+            else 0
+        )
+
+        return PaginatedResponseSchema(
+            items=items,
+            total_items=total_items,
+            total_pages=total_pages,
+            current_page=page
         )
 
     async def get_current(
@@ -127,11 +153,12 @@ class PurchasePlanService:
 
     async def update(
         self,
+        purchase_plan_id: UUID,
         schema: UpdatePurchasePlanSchema,
     ) -> PurchasePlanTable | None:
 
         purchase_plan = await self.get_by_id(
-            schema.purchase_plan_id,
+            purchase_plan_id,
         )
 
         if not purchase_plan:
