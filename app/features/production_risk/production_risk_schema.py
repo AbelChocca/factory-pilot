@@ -90,6 +90,8 @@ class ProductionRiskAnalysisSchema(BaseModel):
 
     products: list[ProductionRiskProductSchema]
 
+    critical_risk_products: int | None = None
+
 ## LLM Context 
 
 class ProductionRiskLLMFactorSchema(BaseModel):

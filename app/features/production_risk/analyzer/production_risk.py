@@ -180,11 +180,12 @@ class ProductionRiskAnalyzer:
         return ProductionRiskAnalysisSchema(
             analysis_period_days=self.ANALYSIS_PERIOD_DAYS,
             products_analyzed=len(products),
+            critical_risk_products=sum(
+                product.risk_level == ProductionRiskLevel.CRITICAL
+                for product in products
+            ),
             high_risk_products=sum(
-                product.risk_level in {
-                    ProductionRiskLevel.HIGH,
-                    ProductionRiskLevel.CRITICAL,
-                }
+                product.risk_level == ProductionRiskLevel.HIGH
                 for product in products
             ),
             medium_risk_products=sum(
