@@ -4,7 +4,7 @@ from decimal import Decimal
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from app.features.inventory.types import InventoryMovementType, InventoryOwnerType
+from app.features.inventory.types import InventoryMovementType, InventoryOwnerType, InventoryTrend
 from app.shared.types import UnitType
 
 
@@ -66,3 +66,46 @@ class LowStockMaterial(BaseModel):
     quantity: Decimal
     minimum_quantity: Decimal
     unit_type: str
+
+class InventoryTrendPoint(BaseModel):
+    date: datetime
+    quantity: Decimal
+
+class InventoryTrendItem(BaseModel):
+    owner_id: UUID
+    owner_type: InventoryOwnerType
+
+    owner_name: str
+    owner_code: str
+    unit_type: UnitType
+
+    current_quantity: Decimal
+    minimum_quantity: Decimal
+
+    average_daily_outflow: Decimal
+    average_daily_inflow: Decimal
+
+    coverage_days: Decimal | None
+
+    trend: InventoryTrend
+
+    total_inflow: Decimal
+    total_outflow: Decimal
+
+    history: list[InventoryTrendPoint]
+
+class InventoryTrendAnalysisContext(BaseModel):
+    period_days: int
+    analyzed_from: datetime
+    analyzed_to: datetime
+    items: list[InventoryTrendItem]
+
+    total_items: int
+    decreasing_items: int
+    increasing_items: int
+    stable_items: int
+
+class InventoryOwnerInfo(BaseModel):
+    owner_name: str
+    owner_code: str
+    unit_type: UnitType
