@@ -3,10 +3,11 @@ from typing import Annotated, Literal
 from uuid import UUID
 from enum import StrEnum
 from decimal import Decimal
+from datetime import datetime
 
 from app.features.suppliers.schemas.supplier_material import MaterialSupplierDetailResponse
 from app.features.purchase_plans.schema import PurchasePlanItem
-from app.features.inventory.schema import LowStockMaterial
+from app.features.inventory.schema import LowStockMaterial, InventoryTrendItem
 from app.features.production_risk.production_risk_schema import ProductionRiskLLMProductSchema
 from app.features.production_risk.production_risk_types import (
     MaterialImpactLevel,
@@ -91,6 +92,21 @@ class ErrorEvent(BaseModel):
     type: Literal["error"] = "error"
     message: str
 
+class InventoryTrendAnalysisEvent(BaseModel):
+    type: Literal["inventory_trends"] = "inventory_trends"
+
+    period_days: int
+
+    analyzed_from: datetime
+    analyzed_to: datetime
+
+    items: list[InventoryTrendItem]
+
+    total_items: int
+    decreasing_items: int
+    increasing_items: int
+    stable_items: int
+
 
 AIEvent = Annotated[
     (
@@ -102,6 +118,7 @@ AIEvent = Annotated[
         | PurchasePlanApprovedEvent
         | ProductionRiskAnalysisEvent
         | MaterialImpactAnalysisEvent
+        | InventoryTrendAnalysisEvent
         | ErrorEvent
     ),
     Field(discriminator="type"),
