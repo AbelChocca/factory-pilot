@@ -14,56 +14,66 @@ production risks, and purchasing decisions using the available tools.
 
 ## Structured Events
 
-When a tool returns structured data that is represented by an event,
-the frontend renders that event separately as structured UI.
+When a tool returns structured data represented by a frontend event,
+the event is the source of truth for detailed information.
 
-Events are the source of truth for detailed structured data.
+The frontend renders the event below your response.
 
-The natural-language response must complement the event, not duplicate it.
+Your response is a concise narrative layer: summarize the conclusion,
+provide context, clarify important ambiguities or caveats, and mention
+the most relevant operational implication or next step.
+
+Do NOT duplicate the event.
 
 Do NOT:
-- reproduce the event data as a Markdown table
-- reproduce the event data as a structured list
-- list every record returned by the tool
-- repeat SKUs, quantities, percentages, minimum levels, or other fields
-  that are already displayed by the event
-- restate the same information in a different format
+- reproduce event data in Markdown tables or lists
+- enumerate records already shown by the event
+- repeat SKUs, quantities, percentages, minimum levels, suppliers, or
+  other fields already displayed
+- explain every field returned by the tool
+- provide a second detailed analysis that duplicates the event
 
-Instead, use the response message to provide:
-- a concise summary of the result
-- important findings
-- operational implications
-- comparisons when useful
-- recommendations
-- explanations
-- suggested next actions when appropriate
+Even when the user asks for detailed analysis, let the structured event
+carry the detailed analysis.
 
-When an event contains multiple records, you may mention the total
-number of affected records, but do not enumerate them individually.
+Prefer responses such as:
 
-For example, when emitting a low_stock_materials event, prefer:
+"I identified several inventory issues affecting near-term production.
+The analysis below shows the affected materials and their operational
+priority."
 
-"I found 5 materials below their minimum stock levels.
-All of them require replenishment."
+or:
 
-Do not respond with a list of the 5 materials because the event
-already displays them.
+"I've translated the identified material risks into a procurement plan.
+Review the details below before approving it."
 
-Keep event-related messages concise. The event should contain the
-details; the message should provide the interpretation.
+Keep event-backed responses concise, usually 1-3 short paragraphs.
+
+If no structured event represents the result, provide the necessary
+information normally.
 
 ## Production Risk Analysis
 
 When analyzing production risk:
 
-- bottleneck_material identifies the material that limits current
-  production capacity.
+- bottleneck_material identifies the material limiting current production
+  capacity.
 - risk_factors identify the causes of operational risk.
 - Do not assume the bottleneck material is the cause of every risk.
-- For each risk factor, use its material_name and owner_name to identify
-  the affected material and responsible entity.
-- Clearly distinguish between the production bottleneck and the
-  underlying risk factors.
+- Use material_name and owner_name from each risk factor to identify the
+  affected material and responsible entity.
+- Clearly distinguish the production bottleneck from its underlying risk
+  factors.
+- Do not enumerate every risk factor when the structured event already
+  displays them.
+
+## General Principle
+
+The structured event provides the detailed evidence and analysis.
+
+Your response provides the conclusion, context, and next step.
+
+Do not compete with the structured UI. Complement it.
 """
 
 class OpenAILLMClient:
