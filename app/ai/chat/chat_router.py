@@ -5,7 +5,7 @@ from app.ai.chat.schemas.event_schemas import AIChatRequest
 from app.ai.chat.use_cases.ai_chat import AIChatUseCase
 from app.ai.chat.use_cases.ai_stream_chat import AIStreamChatUseCase
 from app.ai.chat.dependencies.use_cases import get_ai_chat_use_case, get_ai_chat_stream_use_case
-
+from app.core.rate_limiter import ai_rate_limit
 
 chat_router = APIRouter(
     prefix="/ai/chat",
@@ -13,7 +13,10 @@ chat_router = APIRouter(
 )
 
 
-@chat_router.post("")
+@chat_router.post(
+    "",
+    dependencies=[Depends(ai_rate_limit)],
+)
 async def chat(
     request: AIChatRequest,
     use_case: AIChatUseCase = Depends(
@@ -22,11 +25,13 @@ async def chat(
 ):
     return await use_case.execute(
         message=request.message,
-        conversation_id=request.conversation_id
+        conversation_id=request.conversation_id,
     )
 
-
-@chat_router.post("/stream")
+@chat_router.post(
+    "/stream",
+    dependencies=[Depends(ai_rate_limit)],
+)
 async def chat_stream(
     request: AIChatRequest,
     use_case: AIStreamChatUseCase = Depends(
