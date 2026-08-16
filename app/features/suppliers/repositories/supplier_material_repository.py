@@ -16,6 +16,50 @@ class SupplierMaterialRepository:
     ):
         self.session = session
 
+
+    async def get_preferred_by_material_ids(
+        self,
+        material_ids: list[UUID],
+    ) -> list[MaterialSupplierDetailResponse]:
+
+        statement = (
+            select(
+                SupplierMaterialTable,
+                SupplierTable,
+                MaterialTable,
+            )
+            .join(
+                MaterialTable,
+                MaterialTable.id == SupplierMaterialTable.material_id,
+            )
+            .join(
+                SupplierTable,
+                SupplierTable.id == SupplierMaterialTable.supplier_id,
+            )
+            .where(
+                SupplierMaterialTable.material_id.in_(material_ids),
+                SupplierMaterialTable.preferred.is_(True),
+            )
+        )
+
+        result = await self.session.execute(statement)
+
+        return [
+            MaterialSupplierDetailResponse(
+                material_id=relation.material_id,
+                material_name=material.name,
+                material_sku=material.sku,
+                unit_type=material.unit_type,
+                supplier_id=relation.supplier_id,
+                supplier_name=supplier.name,
+                supplier_sku=relation.supplier_sku,
+                lead_time_days=supplier.lead_time_days,
+                unit_price=relation.unit_price,
+                preferred=relation.preferred,
+            )
+            for relation, supplier, material in result.all()
+        ]
+
     async def get_by_material_ids(
         self,
         material_ids: list[UUID],
