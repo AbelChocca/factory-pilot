@@ -1,6 +1,6 @@
 from uuid import UUID
 
-from sqlalchemy import delete, select, func
+from sqlalchemy import delete, select, func, cast, String
 from sqlalchemy.orm import selectinload, noload
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -27,6 +27,7 @@ class PurchasePlanRepository:
         self,
         page: int,
         limit: int,
+        search: str | None = None
     ) -> tuple[list[PurchasePlanTable], int]:
 
         offset = (page - 1) * limit
@@ -35,9 +36,12 @@ class PurchasePlanRepository:
             func.count(PurchasePlanTable.id)
         )
 
-        total_result = await self.session.execute(
-            count_statement,
-        )
+        if search is not None:
+            count_statement = count_statement.where(
+                cast(PurchasePlanTable.id, String).ilike(f"%{search}%")
+            )
+
+        total_result = await self.session.execute(count_statement)
 
         total_items = total_result.scalar_one()
 
@@ -46,16 +50,21 @@ class PurchasePlanRepository:
             .options(
                 noload(PurchasePlanTable.items)
             )
-            .order_by(
-                PurchasePlanTable.created_at.desc(),
+        )
+
+        if search is not None:
+            statement = statement.where(
+                cast(PurchasePlanTable.id, String).ilike(f"%{search}%")
             )
+
+        statement = (
+            statement
+            .order_by(PurchasePlanTable.created_at.desc())
             .offset(offset)
             .limit(limit)
         )
 
-        result = await self.session.execute(
-            statement,
-        )
+        result = await self.session.execute(statement)
 
         purchase_plans = result.scalars().all()
 

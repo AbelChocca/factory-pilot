@@ -128,6 +128,7 @@ async def get_purchase_plan_items(
 async def get_purchase_plans(
     page: int = Query(1, ge=1),
     limit: int = Query(20, ge=1, le=100),
+    search: str | None = Query(None),
     service: PurchasePlanService = Depends(
         get_purchase_plan_service,
     ),
@@ -135,6 +136,7 @@ async def get_purchase_plans(
     return await service.get_all(
         page=page,
         limit=limit,
+        search=search
     )
 
 @purchase_plan_router.put(

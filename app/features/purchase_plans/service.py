@@ -51,11 +51,13 @@ class PurchasePlanService:
         self,
         page: int,
         limit: int,
+        search: str | None = None
     ) -> PaginatedResponseSchema[PurchasePlanResponseSchema]:
         items, total_items = await (
             self.purchase_plan_repository.get_all(
                 page=page,
                 limit=limit,
+                search=search,
             )
         )
 
@@ -90,14 +92,11 @@ class PurchasePlanService:
 
         relations = (
             await self.supplier_material_repository
-            .get_by_material_ids(material_ids)
+            .get_preferred_by_material_ids(material_ids)
         )
 
         relation_map = {
-            (
-                relation.material_id,
-                relation.supplier_id,
-            ): relation
+            relation.material_id: relation
             for relation in relations
         }
 
@@ -106,26 +105,23 @@ class PurchasePlanService:
         for item_schema in schema.items:
 
             relation = relation_map.get(
-                (
-                    item_schema.material_id,
-                    item_schema.supplier_id,
-                )
+                item_schema.material_id
             )
 
             if relation is None:
                 raise ValueError(
-                    "Supplier is not associated with material."
+                    "Preferred supplier is not associated with material."
                 )
 
             estimated_cost = (
                 item_schema.quantity
                 * relation.unit_price
             )
-            
+
             items.append(
                 PurchasePlanItemTable(
                     material_id=item_schema.material_id,
-                    supplier_id=item_schema.supplier_id,
+                    supplier_id=relation.supplier_id,
                     quantity=item_schema.quantity,
                     unit_price=relation.unit_price,
                     estimated_cost=estimated_cost,

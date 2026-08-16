@@ -23,7 +23,6 @@ class PurchasePlanResponseSchema(BaseModel):
 
 class PurchasePlanItemCreateSchema(BaseModel):
     material_id: UUID
-    supplier_id: UUID
 
     quantity: Decimal = Field(
         gt=0,
@@ -55,21 +54,3 @@ class CreatePurchasePlanSchema(BaseModel):
     items: list[PurchasePlanItemCreateSchema] = Field(
         min_length=1,
     )
-
-    @model_validator(mode="after")
-    def validate_unique_items(self):
-        combinations = [
-            (
-                item.material_id,
-                item.supplier_id,
-            )
-            for item in self.items
-        ]
-
-        if len(combinations) != len(set(combinations)):
-            raise ValueError(
-                "Each material and supplier combination "
-                "must be unique."
-            )
-
-        return self
