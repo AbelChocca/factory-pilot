@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 from typing import Any
 
 from app.ai.chat.schemas.event_schemas import AIEvent
+from app.ai.chat.schemas.message_schemas import AIAgentStatus
 
 class AITool(ABC):
 
@@ -18,6 +19,11 @@ class AITool(ABC):
     @property
     @abstractmethod
     def parameters(self) -> dict[str, Any]:
+        ...
+
+    @property
+    @abstractmethod
+    def agent_status(self) -> AIAgentStatus:
         ...
 
     @abstractmethod

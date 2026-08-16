@@ -8,6 +8,7 @@ from app.features.production_risk.production_risk_schema import (
     ProductionRiskLLMContextSchema,
 )
 from app.ai.chat.schemas.event_schemas import ProductionRiskAnalysisEvent
+from app.ai.chat.types import AIAgentStatus
 
 
 class AnalyzeProductionRiskTool(AITool):
@@ -32,6 +33,10 @@ class AnalyzeProductionRiskTool(AITool):
             "at risk, production bottlenecks, or which materials "
             "may disrupt production."
         )
+
+    @property
+    def agent_status(self) -> AIAgentStatus:
+        return AIAgentStatus.ANALYZING
 
     @property
     def parameters(self) -> dict[str, Any]:

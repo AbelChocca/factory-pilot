@@ -5,6 +5,8 @@ from app.features.inventory.schema import LowStockMaterial
 from app.features.inventory.services.inventory_service import InventoryService
 
 from app.ai.chat.schemas.event_schemas import LowStockMaterialEvent
+from app.ai.chat.types import AIAgentStatus
+
 
 class GetLowStockMaterialsTool(AITool):
 
@@ -24,6 +26,10 @@ class GetLowStockMaterialsTool(AITool):
             "Get all materials whose current stock is below "
             "their minimum stock level."
         )
+
+    @property
+    def agent_status(self) -> AIAgentStatus:
+        return AIAgentStatus.ANALYZING
 
     @property
     def parameters(self) -> dict[str, Any]:

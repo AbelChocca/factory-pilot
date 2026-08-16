@@ -7,6 +7,7 @@ from app.features.purchase_plans.schema import (
 from app.ai.tools.ai_tool import AITool
 from app.features.purchase_plans.model import PurchasePlanTable
 from app.features.purchase_plans.service import PurchasePlanService
+from app.ai.chat.types import AIAgentStatus
 
 
 class ApprovePurchasePlanTool(AITool):
@@ -29,6 +30,10 @@ class ApprovePurchasePlanTool(AITool):
             "that the purchase plan should be approved. "
             "Approval makes the purchase plan no longer editable."
         )
+
+    @property
+    def agent_status(self) -> AIAgentStatus:
+        return AIAgentStatus.COMPLETED
 
     @property
     def parameters(self) -> dict[str, Any]:

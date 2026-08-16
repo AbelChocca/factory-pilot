@@ -3,6 +3,7 @@ from typing import Any
 from app.ai.knowledge.knowledge_service import KnowledgeDocumentService
 from app.ai.rag.context_builder import ContextBuilder
 from app.ai.tools.ai_tool import AITool
+from app.ai.chat.types import AIAgentStatus
 
 
 class SearchKnowledgeTool(AITool):
@@ -26,6 +27,10 @@ class SearchKnowledgeTool(AITool):
             "for relevant information about products, materials, "
             "production, suppliers, and company operations."
         )
+
+    @property
+    def agent_status(self) -> AIAgentStatus:
+        return AIAgentStatus.THINKING
 
     @property
     def parameters(self) -> dict[str, Any]:

@@ -10,7 +10,7 @@ from app.features.suppliers.services.supplier_material import (
 )
 
 from app.ai.chat.schemas.event_schemas import SupplierRecommendationEvent
-
+from app.ai.chat.types import AIAgentStatus
 
 
 class GetMaterialSuppliersTool(AITool):
@@ -32,6 +32,10 @@ class GetMaterialSuppliersTool(AITool):
             "Returns supplier information including supplier name, "
             "supplier SKU, unit price, and whether the supplier is preferred."
         )
+
+    @property
+    def agent_status(self) -> AIAgentStatus:
+        return AIAgentStatus.THINKING
 
     @property
     def parameters(self) -> dict[str, Any]:

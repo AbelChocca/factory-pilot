@@ -6,6 +6,7 @@ from app.features.materials.service import MaterialService
 from app.features.materials.schema import (
     MaterialSearchResultSchema,
 )
+from app.ai.chat.types import AIAgentStatus
 
 
 class SearchMaterialsTool(AITool):
@@ -32,6 +33,10 @@ class SearchMaterialsTool(AITool):
             "and ask which material they mean before calling "
             "another material-specific tool."
         )
+
+    @property
+    def agent_status(self) -> AIAgentStatus:
+        return AIAgentStatus.THINKING
 
     @property
     def parameters(self) -> dict[str, Any]:

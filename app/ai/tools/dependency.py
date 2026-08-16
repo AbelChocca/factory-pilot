@@ -2,10 +2,14 @@ from fastapi import Depends
 
 from app.ai.tools.ai_tool import AITool
 from app.ai.tools.inventory.dependencies import (
+    get_analyze_inventory_trends_tool,
     get_low_stock_materials_tool,
 )
 from app.ai.tools.inventory.get_low_stock_materials import (
     GetLowStockMaterialsTool,
+)
+from app.ai.tools.inventory.analyze_inventory_trends import (
+    AnalyzeInventoryTrendsTool,
 )
 from app.ai.tools.knowledge.dependencies import (
     get_search_knowledge_tool,
@@ -73,7 +77,10 @@ def get_tool_registry(
     ),
     search_materials_tool: SearchMaterialsTool = Depends(
         get_search_materials_tool
-    )
+    ),
+    inventory_trends_tool: AnalyzeInventoryTrendsTool = Depends(
+        get_analyze_inventory_trends_tool,
+    ),
 ) -> ToolRegistry:
 
     tools: list[AITool] = [
@@ -86,6 +93,7 @@ def get_tool_registry(
         analyze_production_risk_tool,
         analyze_material_impact_tool,
         search_materials_tool,
+        inventory_trends_tool,
     ]
 
     return ToolRegistry(

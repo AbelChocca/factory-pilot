@@ -9,6 +9,7 @@ from app.features.production_risk.analyzer.material_impact import (
 from app.features.production_risk.production_risk_schema import (
     MaterialImpactContext,
 )
+from app.ai.chat.types import AIAgentStatus
 
 
 class AnalyzeMaterialImpactTool(AITool):
@@ -33,6 +34,10 @@ class AnalyzeMaterialImpactTool(AITool):
             "about the impact, criticality, or production risk "
             "of a specific material."
         )
+
+    @property
+    def agent_status(self) -> AIAgentStatus:
+        return AIAgentStatus.ANALYZING
 
     @property
     def parameters(self) -> dict[str, Any]:

@@ -11,6 +11,7 @@ from app.features.purchase_plans.schema import (
 from app.features.purchase_plans.service import PurchasePlanService
 
 from app.ai.chat.schemas.event_schemas import PurchasePlanEvent
+from app.ai.chat.types import AIAgentStatus
 
 
 class GeneratePurchasePlanTool(AITool):
@@ -34,13 +35,20 @@ class GeneratePurchasePlanTool(AITool):
             "for each material. The user may specify a target stock level "
             "(for example, 'bring MDF to 200 units') or an additional "
             "quantity to purchase (for example, 'buy 50 extra units of MDF'). "
-            "If the user has not specified how much stock should be purchased, "
-            "ask the user for the desired replenishment quantity or target "
-            "stock level before calling this tool. "
+            "If the purchase quantity cannot be determined, ask the user "
+            "for the desired replenishment quantity or target stock level "
+            "before calling this tool. "
             "Do not call this tool until the purchase quantity is determined. "
-            "The tool validates supplier-material relationships and calculates "
-            "unit prices, lead times, estimated costs, and total cost."
+            "The supplier does NOT need to be provided. The backend "
+            "automatically selects the preferred supplier associated with "
+            "each material. The tool calculates unit prices, lead times, "
+            "estimated costs, and total cost using the selected preferred "
+            "suppliers."
         )
+
+    @property
+    def agent_status(self) -> AIAgentStatus:
+        return AIAgentStatus.COMPLETED
 
     @property
     def parameters(self) -> dict[str, Any]:
@@ -50,8 +58,9 @@ class GeneratePurchasePlanTool(AITool):
                 "items": {
                     "type": "array",
                     "description": (
-                        "Materials to purchase, including the selected "
-                        "supplier and purchase quantity."
+                        "Materials to purchase and the quantity to purchase. "
+                        "Do not provide a supplier; the backend automatically "
+                        "selects the preferred supplier for each material."
                     ),
                     "items": {
                         "type": "object",
@@ -63,14 +72,6 @@ class GeneratePurchasePlanTool(AITool):
                                     "ID of the material to purchase."
                                 ),
                             },
-                            "supplier_id": {
-                                "type": "string",
-                                "format": "uuid",
-                                "description": (
-                                    "ID of the supplier to purchase "
-                                    "the material from."
-                                ),
-                            },
                             "quantity": {
                                 "type": "number",
                                 "description": (
@@ -80,7 +81,6 @@ class GeneratePurchasePlanTool(AITool):
                         },
                         "required": [
                             "material_id",
-                            "supplier_id",
                             "quantity",
                         ],
                         "additionalProperties": False,
@@ -90,7 +90,7 @@ class GeneratePurchasePlanTool(AITool):
             "required": ["items"],
             "additionalProperties": False,
         }
-
+    
     async def execute(
         self,
         arguments: dict[str, Any] | None = None,
@@ -118,9 +118,6 @@ class GeneratePurchasePlanTool(AITool):
                     material_id=UUID(
                         item["material_id"]
                     ),
-                    supplier_id=UUID(
-                        item["supplier_id"]
-                    ),
                     quantity=quantity,
                 )
             )
@@ -129,18 +126,18 @@ class GeneratePurchasePlanTool(AITool):
             items=items,
         )
 
-        purcharse_plan = await self.purchase_plan_service.create(
+        purchase_plan = await self.purchase_plan_service.create(
             schema,
         )
 
-        purcharse_plan_items = await self.purchase_plan_service.get_items(
-            purcharse_plan.id
+        purchase_plan_items = await self.purchase_plan_service.get_items(
+            purchase_plan.id
         )
 
         return PurchasePlanResponse(
-            purchase_plan_id=purcharse_plan.id,
-            total_estimated_cost=purcharse_plan.total_estimated_cost,
-            items=purcharse_plan_items
+            purchase_plan_id=purchase_plan.id,
+            total_estimated_cost=purchase_plan.total_estimated_cost,
+            items=purchase_plan_items,
         )
 
     def to_event(

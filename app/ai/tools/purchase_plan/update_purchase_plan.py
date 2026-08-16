@@ -9,6 +9,7 @@ from app.features.purchase_plans.schema import (
     PurchasePlanResponse
 )
 from app.features.purchase_plans.service import PurchasePlanService
+from app.ai.chat.types import AIAgentStatus
 
 
 class UpdatePurchasePlanTool(AITool):
@@ -36,6 +37,10 @@ class UpdatePurchasePlanTool(AITool):
             "included, it will be added. The supplier and quantity "
             "must be specified for every item."
         )
+
+    @property
+    def agent_status(self) -> AIAgentStatus:
+        return AIAgentStatus.COMPLETED
 
     @property
     def parameters(self) -> dict[str, Any]:
