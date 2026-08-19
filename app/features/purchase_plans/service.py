@@ -15,6 +15,7 @@ from app.features.suppliers.repositories.supplier_material_repository import (
     SupplierMaterialRepository
 )
 from app.shared.schema import PaginatedResponseSchema
+from app.core.logging import logger
 
 
 class PurchasePlanService:
@@ -110,7 +111,8 @@ class PurchasePlanService:
 
             if relation is None:
                 raise ValueError(
-                    "Preferred supplier is not associated with material."
+                    f"Preferred supplier is not associated with material "
+                    f"{item_schema.material_id}."
                 )
 
             estimated_cost = (
