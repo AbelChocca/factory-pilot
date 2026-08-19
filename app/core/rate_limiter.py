@@ -55,6 +55,6 @@ class RateLimiter:
             requests.append(now)
 
 ai_rate_limit = RateLimiter(
-    max_requests=5,
+    max_requests=6,
     window=timedelta(days=7),
 )
