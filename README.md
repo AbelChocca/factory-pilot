@@ -2,7 +2,7 @@
 
 > AI copilot for manufacturing operations that combines manufacturing knowledge with real-time inventory intelligence to help factories make faster, smarter operational decisions.
 
-[Live Demo](https://factorypilot.dev) · [Demo Video](#) · [Repository](#)
+[Live Demo](https://factorypilot.dev) · [Demo Video](https://youtu.be/2ZiFcWJ0NFs) · [Main Repository](https://github.com/AbelChocca/factory-pilot) · [Frontend Repository](https://github.com/AbelChocca/factory-pilot-frontend)
 
 ---
 
